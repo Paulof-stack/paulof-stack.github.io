@@ -59,3 +59,16 @@
       color: green;
     }
 
+    #reader {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  @media (min-width: 768px) {
+    #reader {
+      max-width: 600px;
+      margin: auto;
+      height: 100vh;
+    }
+    }
+    
