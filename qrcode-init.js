@@ -34,8 +34,8 @@ function onScanSuccess(decodedText) {
     form.requestSubmit();
     setTimeout(() => {
       enviando = false;
-    }, 1000);
-  }, 300);
+    }, 700);
+  }, 200);
 }
 
 const html5QrcodeScanner = new Html5QrcodeScanner(
