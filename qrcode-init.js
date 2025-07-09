@@ -6,6 +6,11 @@ const contadorEl = document.getElementById("contadorEntradas");
 let enviando = false;
 let totalEntradas = 0;
 
+// ⏱️ Controle de leitura duplicada
+let ultimoCodigo = "";
+let tempoUltimaLeitura = 0;
+const TEMPO_ENTRE_LEITURAS = 3000; // 3 segundos
+
 // 🔊 Bip de sucesso
 function emitirBip() {
   const context = new AudioContext();
@@ -26,7 +31,7 @@ function emitirBip() {
   }, 150);
 }
 
-// 🔊 Bip de erro (grave)
+// 🔊 Bip de erro
 function emitirErro() {
   const context = new AudioContext();
   const oscillator = context.createOscillator();
@@ -48,11 +53,22 @@ function emitirErro() {
 
 // 📷 Quando QR code for lido
 function onScanSuccess(decodedText) {
-  if (enviando) return;
-  if (!decodedText || decodedText.trim() === "") return;
+  const agora = Date.now();
+
+  if (
+    enviando ||
+    !decodedText ||
+    decodedText.trim() === "" ||
+    (decodedText === ultimoCodigo && (agora - tempoUltimaLeitura) < TEMPO_ENTRE_LEITURAS)
+  ) {
+    return;
+  }
+
+  ultimoCodigo = decodedText;
+  tempoUltimaLeitura = agora;
 
   input.value = decodedText.trim();
-  emitirBip(); // bip imediato
+  emitirBip();
 
   enviando = true;
   setTimeout(() => {
@@ -80,7 +96,6 @@ form.addEventListener('submit', async (e) => {
 
   const data = Object.fromEntries(new FormData(form));
 
-  // ⚡ Feedback imediato
   respostaEl.innerText = "Enviando...";
   respostaEl.style.color = "gray";
 
