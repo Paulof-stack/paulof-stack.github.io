@@ -88,7 +88,7 @@ form.addEventListener('submit', async (e) => {
 
   const codigo = input.value.trim();
   if (!codigo) {
-    respostaEl.innerText = "Código vazio. Por favor, tente novamente.";
+    respostaEl.innerText = "Erro, tente novamente.";
     respostaEl.style.color = "red";
     emitirErro();
     return;
