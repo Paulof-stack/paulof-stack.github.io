@@ -118,9 +118,10 @@ form.addEventListener('submit', async (e) => {
 
     input.value = "";
 
-    setTimeout(() => {
-      respostaEl.innerText = "";
-    }, 800);
+  // ❌ Removido: não limpa mais a resposta automaticamente
+  // setTimeout(() => {
+  //   respostaEl.innerText = "";
+  // }, 800);
 
   } catch (err) {
     respostaEl.innerText = "Erro";
