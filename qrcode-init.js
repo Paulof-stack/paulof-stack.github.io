@@ -79,7 +79,7 @@ function onScanSuccess(decodedText) {
   }, 100);
 }
 
-const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 450 });
 html5QrcodeScanner.render(onScanSuccess);
 
 // 📤 Ao enviar formulário
