@@ -68,7 +68,7 @@ button:hover {
 }
 
 /* 📱 Responsivo: horizontal a partir de 768px */
-@media (min-width: 768px) {
+@media (min-width: 1000px) {
   .layout-horizontal {
     flex-direction: row;
     align-items: flex-start;
