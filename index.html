@@ -8,29 +8,38 @@
 <body>
   <h2>Bipar Peça</h2>
 
-  <!-- SCANNER FORA DO FORM -->
+  <div class="layout-horizontal">
+    
+    <!-- BLOCO FORMULÁRIO -->
+    <div class="form-box">
+      <form id="bipForm">
+        <p><strong>Total de Entradas:</strong> <span id="contadorEntradas">0</span></p>
+        <label>Código da peça:</label>
+        <input type="text" id="codigo" name="codigo" readonly required>
 
+       
 
-  <!-- CAMPO QUE RECEBE O QR CODE (dentro do form) -->
-  <form id="bipForm">
-      
-    <label>Código da peça:</label><br>
-    <div id="reader" style="width: 90%; margin-bottom: 20px; height: auto;"></div>
-    <input type="text" id="codigo" name="codigo" readonly required><br><br>
+        <label>Operador:</label>
+        <input type="text" name="operador" value="" required>
 
-    <label>Operador:</label><br>
-    <input type="text" name="operador" value="" required><br><br>
+        <label>Status:</label>
+        <select name="status" required>
+          <option value="Entrada">Entrada</option>
+          <option value="Saída">Saída</option>
+        </select>
+      </form>
+      <p id="resposta"></p>
+    </div>
 
-    <label>Status:</label><br>
-    <select name="status" required>
-      <option value="Entrada">Entrada</option>
-      <option value="Saída">Saída</option>
-    </select><br><br>
-  </form>
+    <!-- BLOCO SCANNER -->
+    <div class="scanner-box">
+      <div id="reader"></div>
+       
+    </div>
 
-  <p id="resposta"></p>
+  </div>
 
-  <!-- SCRIPTS NO FINAL, FORA DO FORM -->
+  <!-- SCRIPTS -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <script src="qrcode-init.js"></script>
 </body>

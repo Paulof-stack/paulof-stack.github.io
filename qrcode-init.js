@@ -1,8 +1,12 @@
 const input = document.getElementById("codigo");
 const form = document.getElementById("bipForm");
+const respostaEl = document.getElementById("resposta");
+const contadorEl = document.getElementById("contadorEntradas");
 
-let enviando = false; // evita múltiplos envios acidentais
+let enviando = false;
+let totalEntradas = 0;
 
+// 🔊 Bip de sucesso
 function emitirBip() {
   const context = new AudioContext();
   const oscillator = context.createOscillator();
@@ -22,39 +26,63 @@ function emitirBip() {
   }, 150);
 }
 
+// 🔊 Bip de erro (grave)
+function emitirErro() {
+  const context = new AudioContext();
+  const oscillator = context.createOscillator();
+  const gainNode = context.createGain();
+
+  oscillator.type = 'square';
+  oscillator.frequency.setValueAtTime(300, context.currentTime);
+  gainNode.gain.setValueAtTime(0.2, context.currentTime);
+
+  oscillator.connect(gainNode);
+  gainNode.connect(context.destination);
+
+  oscillator.start();
+  setTimeout(() => {
+    oscillator.stop();
+    context.close();
+  }, 300);
+}
+
+// 📷 Quando QR code for lido
 function onScanSuccess(decodedText) {
   if (enviando) return;
-  if (!decodedText || decodedText.trim() === "") return; // evita código vazio
+  if (!decodedText || decodedText.trim() === "") return;
 
   input.value = decodedText.trim();
-  emitirBip();
-  enviando = true;
+  emitirBip(); // bip imediato
 
+  enviando = true;
   setTimeout(() => {
     form.requestSubmit();
     setTimeout(() => {
       enviando = false;
-    }, 700);
-  }, 200);
+    }, 500);
+  }, 100);
 }
 
-const html5QrcodeScanner = new Html5QrcodeScanner(
-  "reader",
-  { fps: 10, qrbox: 250 }
-);
+const html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
 html5QrcodeScanner.render(onScanSuccess);
 
+// 📤 Ao enviar formulário
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  // Valida que o código não está vazio antes de enviar
   const codigo = input.value.trim();
   if (!codigo) {
-    document.getElementById("resposta").innerText = "Código vazio. Por favor, tente novamente.";
+    respostaEl.innerText = "Código vazio. Por favor, tente novamente.";
+    respostaEl.style.color = "red";
+    emitirErro();
     return;
   }
 
   const data = Object.fromEntries(new FormData(form));
+
+  // ⚡ Feedback imediato
+  respostaEl.innerText = "Enviando...";
+  respostaEl.style.color = "gray";
 
   try {
     const resposta = await fetch("https://webhook.ton618.cloud/webhook/bip-pecas", {
@@ -64,12 +92,25 @@ form.addEventListener('submit', async (e) => {
     });
 
     const json = await resposta.json();
-    document.getElementById("resposta").innerText = json.mensagem || "Enviado!";
 
-    form.querySelector('#codigo').value = "";
+    respostaEl.innerText = json.mensagem || "OK!";
+    respostaEl.style.color = "green";
+
+    if (data.status === "Entrada") {
+      totalEntradas++;
+      contadorEl.innerText = totalEntradas;
+    }
+
+    input.value = "";
+
+    setTimeout(() => {
+      respostaEl.innerText = "";
+    }, 800);
 
   } catch (err) {
-    document.getElementById("resposta").innerText = "Erro ao enviar!";
+    respostaEl.innerText = "Erro";
+    respostaEl.style.color = "red";
+    emitirErro();
     console.error("Erro no envio:", err);
   }
 });
